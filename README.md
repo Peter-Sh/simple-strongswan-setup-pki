@@ -2,9 +2,12 @@
 
 This ansible role helps to setup simple PKI for strongswan vpn based on easyrsa3.
 
+
 I've made it for private usage, but decided to publish it to help my friends to setup vpn servers.
 
 Use it on your own risk.
+
+Strongswan server may be installed and configured with this [role](https://github.com/Peter-Sh/simple-strongswan-centos-7).
 
 The work is based on this [post](https://habr.com/post/250859/) (russian).
 
