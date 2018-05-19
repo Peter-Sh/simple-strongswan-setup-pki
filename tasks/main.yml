@@ -1,0 +1,33 @@
+# Initialize easy-rsa pki and build server and client certificates
+- name: Install easy-rsa
+  git: repo=https://github.com/ValdikSS/easy-rsa-ipsec.git dest={{ base_dir }}
+
+- name: Init pki
+  shell: ./easyrsa init-pki
+  args:
+    chdir: "{{ base_dir }}/easyrsa3"
+    creates: "{{ base_dir }}/easyrsa3/pki"
+- name: Build-ca pki
+  shell: echo "CA {{ fqdn }}" | ./easyrsa build-ca nopass
+  args:
+    chdir: "{{ base_dir }}/easyrsa3"
+    creates: "{{ base_dir }}/easyrsa3/pki/ca.crt"
+
+- name: Build server certificate
+  shell: ./easyrsa build-server-full {{ fqdn }} nopass
+  args:
+    chdir: "{{ base_dir }}/easyrsa3"
+    creates: "{{ base_dir }}/easyrsa3/pki/issued/{{ fqdn }}.crt"
+
+- name: Build clients certificate
+  shell: ./easyrsa build-client-full {{ item }} nopass
+  args:
+    chdir: "{{ base_dir }}/easyrsa3"
+    creates: "{{ base_dir }}/easyrsa3/pki/issued/{{ item }}.crt"
+  loop: "{{ clients }}"
+- name: Export clients p12
+  shell: ./easyrsa export-p12 {{ item }} nopass
+  args:
+    chdir: "{{ base_dir }}/easyrsa3"
+    creates: "{{ base_dir }}/easyrsa3/pki/private/{{ item }}.p12"
+  loop: "{{ clients }}"
